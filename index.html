@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link href="./style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="website-wallpaper">
+      <img src="wallpaper.gif" />
+    </div>
+    <main>
+      <div id="player"></div>
+      <div id="clock-container">
+        <div id="time"></div>
+        <div id="date"></div>
+      </div>
+      <div id="todo-wrapper">
+        <div id="todo-bar">
+          <input
+            type="text"
+            id="todo-input"
+            placeholder="add a task..."
+            autocomplete="off"
+          />
+          <button id="todo-toggle">Tasks (0)</button>
+        </div>
+        <div id="todo-menu" class="hidden">
+          <div class="todo-header">
+            <h3 id="todo-title">Tasks</h3>
+            <button id="history-toggle" class="icon-btn" title="Toggle History">
+              ◷
+            </button>
+          </div>
+          <ul id="todo-list"></ul>
+        </div>
+      </div>
+      <div id="controls-wrapper">
+        <div id="social-links">
+          <a
+            href="https://x.com/gourav_cc"
+            class="circular-btn social-icon"
+            title="Twitter"
+            ><i class="fa-brands fa-x-twitter"></i
+          ></a>
+          <a
+            href=" https://discord.com/users/785844138859298827"
+            class="circular-btn social-icon"
+            title="Discord"
+            ><i class="fa-brands fa-discord"></i
+          ></a>
+          <a
+            href="https://bsky.app/profile/gouravjareda.bsky.social"
+            class="circular-btn social-icon"
+            title="Bluesky"
+            ><i class="fa-brands fa-bluesky"></i
+          ></a>
+          <a
+            href="https://github.com/c2-07"
+            class="circular-btn social-icon"
+            title="GitHub"
+            ><i class="fa-brands fa-github"></i
+          ></a>
+        </div>
+      </div>
+      <div id="playback-wrapper">
+        <div class="playback-pill">
+          <button id="btn-play-pause" class="playback-btn" title="Play/Pause">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <div class="divider"></div>
+          <div class="volume-container">
+            <button id="btn-volume" class="playback-btn" title="Mute/Unmute">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <input
+              type="range"
+              id="volume-slider"
+              min="0"
+              max="100"
+              value="100"
+              title="Volume"
+            />
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>
