@@ -1,0 +1,277 @@
+---
+---
+<!-- Hidden Player -->
+<div id="player" class="fixed w-[1px] h-[1px] opacity-0 pointer-events-none"></div>
+
+<!-- Playback Pill (Bottom Right) -->
+<div class="fixed bottom-10 right-12 z-10">
+  <div class="flex items-center gap-1 bg-[#0f0f0f]/40 backdrop-blur-[16px] border border-white/10 rounded-[30px] py-[0.4rem] px-[0.6rem] shadow-[0_4px_20px_rgba(0,0,0,0.2)] transition-all duration-300 hover:bg-[#0f0f0f]/55 hover:border-white/20 group">
+    
+    <button id="btn-play-pause" class="bg-transparent border-none text-white/75 text-[0.95rem] cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] flex items-center justify-center w-8 h-8 rounded-full hover:text-white hover:bg-white/15 hover:scale-105" title="Play/Pause">
+      <i class="fa-solid fa-play"></i>
+    </button>
+    
+    <div class="w-[1px] h-4 bg-white/15 mx-1 transition-colors duration-300 group-hover:bg-white/30"></div>
+    
+    <div class="relative group/channel">
+      <button id="btn-channel" class="bg-transparent border-none text-white/75 text-[0.95rem] cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] flex items-center justify-center w-8 h-8 rounded-full hover:text-white hover:bg-white/15 hover:scale-105" title="Channels">
+        <i class="fa-solid fa-radio"></i>
+      </button>
+      <div class="absolute bottom-full right-1/2 translate-x-1/2 mb-4 w-36 bg-black/60 backdrop-blur-xl border border-white/15 rounded-xl p-2 shadow-2xl opacity-0 invisible translate-y-2 scale-95 transition-all duration-300 origin-bottom group-hover/channel:opacity-100 group-hover/channel:visible group-hover/channel:translate-y-0 group-hover/channel:scale-100 flex flex-col gap-1">
+        <button class="channel-btn text-left text-[0.8rem] text-white/80 hover:text-white hover:bg-white/10 rounded-lg px-3 py-2 transition-colors font-sans flex items-center gap-2" data-id="X4VbdwhkE10">
+          <i class="fa-solid fa-headphones text-[0.7rem]"></i> Lofi Girl
+        </button>
+        <button class="channel-btn text-left text-[0.8rem] text-white/80 hover:text-white hover:bg-white/10 rounded-lg px-3 py-2 transition-colors font-sans flex items-center gap-2" data-id="CwPCy1GLS38">
+          <i class="fa-solid fa-cloud-rain text-[0.7rem]"></i> Rainy Days
+        </button>
+        <button class="channel-btn text-left text-[0.8rem] text-white/80 hover:text-white hover:bg-white/10 rounded-lg px-3 py-2 transition-colors font-sans flex items-center gap-2" data-id="E2vONfzoyRI">
+          <i class="fa-solid fa-record-vinyl text-[0.7rem]"></i> Jazz
+        </button>
+        <button class="channel-btn text-left text-[0.8rem] text-white/80 hover:text-white hover:bg-white/10 rounded-lg px-3 py-2 transition-colors font-sans flex items-center gap-2" data-id="4xDzrJKXOOY">
+          <i class="fa-solid fa-compact-disc text-[0.7rem]"></i> Synthwave
+        </button>
+      </div>
+    </div>
+
+    <div class="w-[1px] h-4 bg-white/15 mx-1 transition-colors duration-300 group-hover:bg-white/30"></div>
+
+    <div class="flex items-center volume-container group/vol">
+      <button id="btn-volume" class="bg-transparent border-none text-white/75 text-[0.95rem] cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] flex items-center justify-center w-8 h-8 rounded-full hover:text-white hover:bg-white/15 hover:scale-105" title="Mute/Unmute">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+      <input
+        type="range"
+        id="volume-slider"
+        min="0"
+        max="100"
+        value="100"
+        title="Volume"
+        class="volume-slider"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  .volume-slider {
+    -webkit-appearance: none;
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+    margin: 0;
+    --slider-fill: 100%;
+    background: linear-gradient(
+      to right,
+      #fff var(--slider-fill),
+      rgba(255, 255, 255, 0.2) var(--slider-fill)
+    );
+    height: 3px;
+    border-radius: 2px;
+    outline: none;
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .volume-container:hover .volume-slider,
+  .volume-slider:focus {
+    width: 60px;
+    opacity: 1;
+    pointer-events: auto;
+    margin: 0 0.4rem 0 0.1rem;
+  }
+
+  .volume-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    border-radius: 2px;
+  }
+
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-top: -3.5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.25s ease;
+  }
+
+  .volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+</style>
+
+<script>
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+
+  let player: any;
+  let isMuted = false;
+  
+  const savedVolume = parseInt(localStorage.getItem("bocchi-volume") || "100", 10);
+  let previousVolume = savedVolume > 0 ? savedVolume : 100;
+  const savedGenre = localStorage.getItem("bocchi-genre") || "X4VbdwhkE10";
+
+  (window as any).onYouTubeIframeAPIReady = function() {
+    player = new (window as any).YT.Player("player", {
+      width: "1",
+      height: "1",
+      videoId: savedGenre,
+      playerVars: {
+        controls: 0,
+        autoplay: 1,
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+      },
+    });
+  };
+
+  const btnPlayPause = document.getElementById("btn-play-pause");
+  const btnVolume = document.getElementById("btn-volume");
+  const volumeSlider = document.getElementById("volume-slider") as HTMLInputElement;
+
+  function updateSliderVisuals(vol: number) {
+    if (volumeSlider) {
+      volumeSlider.value = vol.toString();
+      volumeSlider.style.setProperty("--slider-fill", `${vol}%`);
+    }
+  }
+
+  function onPlayerReady(event: any) {
+    player.setVolume(savedVolume);
+    updateSliderVisuals(savedVolume);
+
+    if (savedVolume === 0) {
+      isMuted = true;
+      if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+    } else {
+      isMuted = false;
+      if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+    }
+
+    event.target.playVideo();
+    if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-play"></i>';
+  }
+
+  function onPlayerStateChange(event: any) {
+    if (event.data === (window as any).YT.PlayerState.PLAYING) {
+      if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    } else if (event.data === (window as any).YT.PlayerState.PAUSED) {
+      if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-play"></i>';
+    }
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.target as HTMLElement).tagName === "INPUT") return;
+    if (e.code !== "Space" || !player) return;
+    e.preventDefault();
+    togglePlayPause();
+  });
+
+  function togglePlayPause() {
+    if (!player) return;
+    const state = player.getPlayerState();
+    if (state === (window as any).YT.PlayerState.PLAYING) {
+      player.pauseVideo();
+      if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-play"></i>';
+    } else {
+      player.playVideo();
+      if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }
+  }
+
+  if (btnPlayPause) {
+    btnPlayPause.addEventListener("click", togglePlayPause);
+  }
+
+  const channelBtns = document.querySelectorAll(".channel-btn");
+  channelBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const target = (e.currentTarget as HTMLElement);
+      const videoId = target.getAttribute("data-id");
+      if (videoId && player) {
+        player.loadVideoById(videoId);
+        localStorage.setItem("bocchi-genre", videoId);
+        if (btnPlayPause) btnPlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
+      }
+    });
+  });
+
+  let fadeInterval: number;
+
+  if (volumeSlider) {
+    // Initial UI state setup for the slider before YouTube loads
+    updateSliderVisuals(savedVolume);
+
+    volumeSlider.addEventListener("input", (e) => {
+      if (!player) return;
+      clearInterval(fadeInterval);
+      const vol = parseInt((e.target as HTMLInputElement).value, 10);
+      player.setVolume(vol);
+      localStorage.setItem("bocchi-volume", vol.toString());
+      updateSliderVisuals(vol);
+
+      if (isMuted && vol > 0) {
+        player.unMute();
+        isMuted = false;
+      }
+
+      if (vol === 0) {
+        if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+        isMuted = true;
+      } else {
+        if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        isMuted = false;
+        previousVolume = vol;
+      }
+    });
+  }
+
+  function smoothMuteToggle() {
+    if (!player) return;
+    clearInterval(fadeInterval);
+
+    let currentVol = player.getVolume();
+    if (player.isMuted()) currentVol = 0;
+
+    const targetVol = isMuted ? previousVolume || 100 : 0;
+    if (!isMuted) previousVolume = currentVol || (volumeSlider ? parseInt(volumeSlider.value) : 100);
+
+    if (targetVol > 0) {
+      player.unMute();
+      isMuted = false;
+      if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+    } else {
+      isMuted = true;
+      if (btnVolume) btnVolume.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+    }
+
+    const diff = targetVol - currentVol;
+    const steps = 15;
+    const stepVal = diff / steps;
+    let currentStep = 0;
+
+    fadeInterval = window.setInterval(() => {
+      currentStep++;
+      let nextVol = Math.round(currentVol + stepVal * currentStep);
+      if (currentStep >= steps) {
+        nextVol = targetVol;
+        clearInterval(fadeInterval);
+        if (nextVol === 0) player.mute();
+        localStorage.setItem("bocchi-volume", nextVol.toString());
+      }
+      player.setVolume(nextVol);
+      updateSliderVisuals(nextVol);
+    }, 15);
+  }
+
+  if (btnVolume) {
+    btnVolume.addEventListener("click", smoothMuteToggle);
+  }
+</script>
