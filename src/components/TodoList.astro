@@ -1,0 +1,152 @@
+---
+---
+<div id="todo-wrapper" class="fixed top-10 right-12 z-10 group flex flex-col items-end">
+  <button id="todo-toggle" class="w-10 h-10 rounded-full bg-black/30 backdrop-blur-[8px] border border-white/15 text-white/85 text-[1.1rem] flex items-center justify-center cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:text-white relative">
+    <i class="fa-solid fa-list-check"></i>
+    <span id="todo-count" class="absolute -top-1 -right-1 bg-white/30 text-white text-[0.65rem] w-4 h-4 rounded-full flex items-center justify-center font-sans font-bold shadow-sm backdrop-blur-md" style="display: none;">0</span>
+  </button>
+
+  <div id="todo-menu" class="absolute top-full mt-4 right-0 w-[320px] bg-black/40 backdrop-blur-xl border border-white/15 rounded-2xl p-5 shadow-2xl opacity-0 invisible translate-y-[-10px] scale-95 transition-all duration-300 origin-top-right group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:scale-100 flex flex-col gap-4">
+    <div class="w-full">
+      <input
+        type="text"
+        id="todo-input"
+        placeholder="Add a new task..."
+        autocomplete="off"
+        class="w-full bg-white/5 border border-white/10 rounded-lg text-white font-inherit text-[0.9rem] outline-none transition-all duration-300 py-2 px-3 focus:border-white/40 focus:bg-white/10 placeholder:text-white/50 shadow-inner"
+      />
+    </div>
+
+    <div class="flex justify-between items-center border-b border-white/20 pb-2">
+      <h3 id="todo-title" class="text-[0.8rem] font-bold tracking-[1.5px] uppercase m-0 opacity-80 text-white">Tasks</h3>
+      <button id="history-toggle" class="bg-transparent border-none text-white/60 cursor-pointer text-[1.1rem] transition-colors flex items-center justify-center hover:text-white" title="Toggle History">◷</button>
+    </div>
+    <ul id="todo-list" class="list-none overflow-y-auto flex flex-col gap-3 m-0 p-0 pr-1 max-h-[40vh] custom-scrollbar"></ul>
+  </div>
+</div>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+</style>
+
+<script>
+  interface Todo {
+    text: string;
+    completed: boolean;
+  }
+
+  const todoInput = document.getElementById("todo-input") as HTMLInputElement;
+  const todoList = document.getElementById("todo-list");
+  const todoCount = document.getElementById("todo-count");
+  const historyToggle = document.getElementById("history-toggle");
+  const todoTitle = document.getElementById("todo-title");
+
+  let todos: Todo[] = JSON.parse(localStorage.getItem("lofi-todos") || "[]");
+  let showingHistory = false;
+
+  function renderTodos() {
+    if (!todoList) return;
+    todoList.innerHTML = "";
+
+    const filteredTodos = todos.filter((todo) => showingHistory ? todo.completed : !todo.completed);
+
+    filteredTodos.forEach((todo) => {
+      const originalIndex = todos.indexOf(todo);
+      const li = document.createElement("li");
+      li.className = `text-[0.9rem] flex items-start gap-3 opacity-90 transition-opacity break-words ${todo.completed ? 'completed' : ''}`;
+      
+      const tickBtn = document.createElement("button");
+      tickBtn.className = "mt-[2px] w-5 h-5 rounded-md border border-white/30 bg-white/5 text-transparent cursor-pointer flex items-center justify-center transition-all hover:border-white/60 hover:bg-white/10";
+      if (todo.completed) {
+        tickBtn.className = "mt-[2px] w-5 h-5 rounded-md border border-green-400 bg-green-400/20 text-green-400 cursor-pointer flex items-center justify-center transition-all hover:bg-green-400/30";
+        tickBtn.innerHTML = "✓";
+        tickBtn.title = showingHistory ? "Restore" : "Uncheck";
+      } else {
+        tickBtn.innerHTML = "✓";
+        tickBtn.className += " hover:text-white/40";
+        tickBtn.title = "Mark Complete";
+      }
+      tickBtn.style.fontSize = "0.7rem";
+      tickBtn.onclick = () => toggleTodo(originalIndex);
+
+      const textSpan = document.createElement("span");
+      textSpan.className = `flex-1 leading-[1.5] ${todo.completed ? 'line-through opacity-50' : 'text-white/90'}`;
+      textSpan.textContent = todo.text;
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "bg-transparent border-none text-white/30 cursor-pointer text-[1rem] flex items-center justify-center transition-colors font-sans hover:text-red-400 opacity-0 group-hover/item:opacity-100";
+      delBtn.innerHTML = "✕";
+      delBtn.title = "Delete";
+      delBtn.onclick = () => deleteTodo(originalIndex);
+
+      li.classList.add("group/item");
+      li.appendChild(tickBtn);
+      li.appendChild(textSpan);
+      li.appendChild(delBtn);
+      todoList.appendChild(li);
+    });
+
+    const pendingCount = todos.filter((t) => !t.completed).length;
+    if (todoCount) {
+      todoCount.textContent = pendingCount.toString();
+      todoCount.style.display = pendingCount > 0 ? "flex" : "none";
+    }
+    if (todoTitle) {
+      todoTitle.textContent = showingHistory ? "History" : "Tasks";
+    }
+  }
+
+  function toggleTodo(index: number) {
+    todos[index].completed = !todos[index].completed;
+    saveTodos();
+    renderTodos();
+  }
+
+  function deleteTodo(index: number) {
+    todos.splice(index, 1);
+    saveTodos();
+    renderTodos();
+  }
+
+  function addTodo(text: string) {
+    if (!text.trim()) return;
+    todos.push({ text: text.trim(), completed: false });
+    saveTodos();
+
+    if (showingHistory) {
+      showingHistory = false;
+    }
+    renderTodos();
+  }
+
+  function saveTodos() {
+    localStorage.setItem("lofi-todos", JSON.stringify(todos));
+  }
+
+  if (historyToggle) {
+    historyToggle.addEventListener("click", () => {
+      showingHistory = !showingHistory;
+      renderTodos();
+    });
+  }
+
+  if (todoInput) {
+    todoInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        addTodo(todoInput.value);
+        todoInput.value = "";
+      }
+    });
+  }
+
+  renderTodos();
+</script>
